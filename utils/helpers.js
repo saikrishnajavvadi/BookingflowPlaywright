@@ -110,6 +110,35 @@ async function loginAndGoToBooking(page) {
 }
 
 /**
+ * Signs out the current attendee and confirms the login page is shown.
+ * @param {import('@playwright/test').Page} page
+ */
+async function logout(page) {
+  await page.getByTestId('logout-btn').click();
+  await expect(page).toHaveURL(`${BASE_URL}/login`);
+  await expect(page.locator('#login-btn')).toBeVisible();
+}
+
+/**
+ * Asserts the attendee is signed out and on the public login view.
+ * @param {import('@playwright/test').Page} page
+ */
+async function expectLoggedOut(page) {
+  await expect(page).toHaveURL(`${BASE_URL}/login`);
+  await expect(page.locator('#login-btn')).toBeVisible();
+  await expect(page.getByTestId('logout-btn')).toBeHidden();
+}
+
+/**
+ * Asserts the attendee is signed in with access to account navigation.
+ * @param {import('@playwright/test').Page} page
+ */
+async function expectLoggedIn(page) {
+  await expect(page.getByTestId('logout-btn')).toBeVisible();
+  await expect(page.getByTestId('nav-bookings')).toBeVisible();
+}
+
+/**
  * Logs into the Let's Shop client app and confirms the dashboard loads.
  * @param {import('@playwright/test').Page} page
  */
@@ -134,5 +163,8 @@ module.exports = {
   register,
   login,
   loginAndGoToBooking,
+  logout,
+  expectLoggedOut,
+  expectLoggedIn,
   clientLogin,
 };
