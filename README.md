@@ -8,7 +8,7 @@ End-to-end Playwright tests for the **EventHub** demo app
 | Spec file | Scenario |
 |-----------|----------|
 | `tests/booking-flow.spec.js` | Logs in, creates a brand-new event from the admin panel, books it, verifies it appears in **My Bookings**, and asserts the seat count drops by **exactly 1**. |
-| `tests/refund-eligibility.spec.js` | Two tests: a **1-ticket** booking shows *"Eligible for refund"*, a **3-ticket** booking shows *"Not eligible for refund"*. Both verify the `#refund-spinner` appears and then disappears before the result is shown. |
+| `tests/refund-eligibility.spec.js` | **Group booking (3 tickets):** books together, opens booking details, runs the refund-eligibility check (spinner appears then clears), and asserts *"Not eligible for refund"* with reason *"Group bookings (3 tickets) are non-refundable"*. Also covers a **1-ticket** booking that shows *"Eligible for refund"*. |
 
 Reusable helpers live in `utils/helpers.js`:
 `login(page)`, `loginAndGoToBooking(page)`, `futureDateValue()`, `readSeatCount(card)`.
