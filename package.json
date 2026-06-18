@@ -9,6 +9,7 @@
     "test:refund": "playwright test tests/refund-eligibility.spec.js",
     "test:login": "playwright test tests/client-login.spec.js",
     "test:sign-out": "playwright test tests/sign-out.spec.js",
+    "test:registration": "playwright test tests/registration.spec.js",
     "report": "playwright show-report"
   },
   "keywords": [
