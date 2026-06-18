@@ -4,6 +4,19 @@ const { expect } = require('@playwright/test');
 /** Base URL for the EventHub application under test. */
 const BASE_URL = 'https://eventhub.rahulshettyacademy.com';
 
+/** Base URL for the Let's Shop (client) e-commerce application. */
+const CLIENT_BASE_URL = 'https://rahulshettyacademy.com/client';
+
+/**
+ * Credentials for the Let's Shop client app. Register an account at
+ * https://rahulshettyacademy.com/client/#/auth/register, then set
+ * CLIENT_EMAIL / CLIENT_PASSWORD in your shell (or CI secrets).
+ */
+const CLIENT_CREDENTIALS = {
+  email: process.env.CLIENT_EMAIL || 'qa.automation@example.com',
+  password: process.env.CLIENT_PASSWORD || 'Password@123',
+};
+
 /**
  * Credentials. The task says "create your own credentials", so these are
  * configurable via environment variables and fall back to placeholder values.
@@ -75,11 +88,29 @@ async function loginAndGoToBooking(page) {
   await expect(page.getByRole('link', { name: /Browse Events/ })).toBeVisible();
 }
 
+/**
+ * Logs into the Let's Shop client app and confirms the dashboard loads.
+ * @param {import('@playwright/test').Page} page
+ */
+async function clientLogin(page) {
+  await page.goto(`${CLIENT_BASE_URL}/#/auth/login`);
+
+  await page.locator('#userEmail').fill(CLIENT_CREDENTIALS.email);
+  await page.locator('#userPassword').fill(CLIENT_CREDENTIALS.password);
+  await page.locator('#login').click();
+
+  await expect(page).toHaveURL(/\/dashboard\/dash/);
+  await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible();
+}
+
 module.exports = {
   BASE_URL,
+  CLIENT_BASE_URL,
   CREDENTIALS,
+  CLIENT_CREDENTIALS,
   futureDateValue,
   readSeatCount,
   login,
   loginAndGoToBooking,
+  clientLogin,
 };
