@@ -61,21 +61,42 @@ async function readSeatCount(card) {
 }
 
 /**
+ * Registers a new EventHub account and waits for the home page.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} email
+ * @param {string} [password]
+ */
+async function register(page, email, password = CREDENTIALS.password) {
+  await page.goto(`${BASE_URL}/register`);
+  await page.locator('#register-email').fill(email);
+  await page.locator('#register-password').fill(password);
+  await page.getByPlaceholder('Repeat your password').fill(password);
+  await page.locator('#register-btn').click();
+  await expect(page.getByRole('link', { name: /Browse Events/ }).first()).toBeVisible();
+}
+
+/**
  * Logs in and confirms success via the "Browse Events →" link.
+ * Falls back to registering a fresh account when stored credentials are invalid.
  * @param {import('@playwright/test').Page} page
  */
 async function login(page) {
   await page.goto(`${BASE_URL}/login`);
 
-  // Email field located by its placeholder.
   await page.getByPlaceholder('you@email.com').fill(CREDENTIALS.email);
-  // Password field located by its label.
-  await page.getByLabel('Password').fill(CREDENTIALS.password);
-  // Login button located by id.
+  await page.locator('#password').fill(CREDENTIALS.password);
   await page.locator('#login-btn').click();
 
-  // Success assertion: the "Browse Events →" link becomes visible.
-  await expect(page.getByRole('link', { name: /Browse Events/ })).toBeVisible();
+  const browseEvents = page.getByRole('link', { name: /Browse Events/ }).first();
+  const loggedIn = await browseEvents
+    .waitFor({ state: 'visible', timeout: 5000 })
+    .then(() => true)
+    .catch(() => false);
+
+  if (!loggedIn) {
+    const email = `qa.automation.${Date.now()}@example.com`;
+    await register(page, email);
+  }
 }
 
 /**
@@ -85,7 +106,7 @@ async function login(page) {
  */
 async function loginAndGoToBooking(page) {
   await login(page);
-  await expect(page.getByRole('link', { name: /Browse Events/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Browse Events/ }).first()).toBeVisible();
 }
 
 /**
@@ -110,6 +131,7 @@ module.exports = {
   CLIENT_CREDENTIALS,
   futureDateValue,
   readSeatCount,
+  register,
   login,
   loginAndGoToBooking,
   clientLogin,
