@@ -1,0 +1,17 @@
+{
+  "name": "bookingflow-playwright",
+  "version": "1.0.0",
+  "description": "End-to-end Playwright tests for the EventHub booking and refund flows",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:booking": "playwright test tests/booking-flow.spec.js",
+    "test:refund": "playwright test tests/refund-eligibility.spec.js",
+    "report": "playwright show-report"
+  },
+  "keywords": ["playwright", "e2e", "automation", "eventhub"],
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
