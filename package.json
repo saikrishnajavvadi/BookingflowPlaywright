@@ -7,11 +7,17 @@
     "test:headed": "playwright test --headed",
     "test:booking": "playwright test tests/booking-flow.spec.js",
     "test:refund": "playwright test tests/refund-eligibility.spec.js",
+    "test:login": "playwright test tests/client-login.spec.js",
     "report": "playwright show-report"
   },
-  "keywords": ["playwright", "e2e", "automation", "eventhub"],
+  "keywords": [
+    "playwright",
+    "e2e",
+    "automation",
+    "eventhub"
+  ],
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@playwright/test": "1.49.0"
   }
 }
