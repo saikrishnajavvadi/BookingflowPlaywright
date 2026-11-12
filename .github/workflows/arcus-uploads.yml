@@ -1,0 +1,40 @@
+name: Arcus Uploads (headless)
+on:
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: 'Only run tests whose title matches (e.g. "UN-" or "FR1.3"); empty = all'
+        required: false
+        default: ''
+jobs:
+  arcus-uploads:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci || npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Run Arcus Uploads suite
+        env:
+          ARCUS_BASE_URL: ${{ vars.ARCUS_BASE_URL || 'https://arcus-edge.testsigma.com' }}
+          ARCUS_UPLOADS_URL: ${{ vars.ARCUS_UPLOADS_URL }}
+          ARCUS_USERNAME: ${{ secrets.ARCUS_USERNAME }}
+          ARCUS_PASSWORD: ${{ secrets.ARCUS_PASSWORD }}
+          ARCUS_TESTER_USERNAME: ${{ secrets.ARCUS_TESTER_USERNAME }}
+          ARCUS_TESTER_PASSWORD: ${{ secrets.ARCUS_TESTER_PASSWORD }}
+          ARCUS_READONLY_USERNAME: ${{ secrets.ARCUS_READONLY_USERNAME }}
+          ARCUS_READONLY_PASSWORD: ${{ secrets.ARCUS_READONLY_PASSWORD }}
+          ARCUS_API_TOKEN: ${{ secrets.ARCUS_API_TOKEN }}
+          ARCUS_READONLY_API_TOKEN: ${{ secrets.ARCUS_READONLY_API_TOKEN }}
+        run: npx playwright test -c playwright.arcus.config.js ${{ inputs.grep && format('-g "{0}"', inputs.grep) || '' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcus-uploads-report
+          path: |
+            playwright-report/arcus/
+            test-results/arcus/
+          retention-days: 7

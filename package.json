@@ -8,7 +8,10 @@
     "test:booking": "playwright test tests/booking-flow.spec.js",
     "test:refund": "playwright test tests/refund-eligibility.spec.js",
     "test:login": "playwright test tests/client-login.spec.js",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "test:arcus": "playwright test -c playwright.arcus.config.js",
+    "test:arcus:list": "playwright test -c playwright.arcus.config.js --list",
+    "report:arcus": "playwright show-report playwright-report/arcus"
   },
   "keywords": [
     "playwright",
